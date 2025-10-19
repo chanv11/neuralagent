@@ -34,7 +34,7 @@ def login_with_email(user_auth: UserAuth, db: Session = Depends(get_session)):
             message='Forbidden.'
         )
 
-    exp = datetime.datetime.now(datetime.UTC) + constants.ACCESS_TOKEN_LIFETIME_DELTA
+    exp = datetime.datetime.now(datetime.timezone.utc) + constants.ACCESS_TOKEN_LIFETIME_DELTA
     login_session = create_login_session(user, db, exp, user_auth.login_session_type)
     token, refresh_token = create_token_from_user(user, exp, login_session.id)
 
@@ -112,7 +112,7 @@ def login_with_google_desktop(login_google_obj: LoginWithGoogle, db: Session = D
                 db.commit()
                 db.refresh(user)
 
-        exp = datetime.datetime.now(datetime.UTC) + constants.ACCESS_TOKEN_LIFETIME_DELTA
+        exp = datetime.datetime.now(datetime.timezone.utc) + constants.ACCESS_TOKEN_LIFETIME_DELTA
         login_session = create_login_session(user, db, exp, login_google_obj.login_session_type)
         token, refresh_token = create_token_from_user(user, exp, login_session.id)
 
@@ -169,7 +169,7 @@ def signup(user_create: UserCreate, db: Session = Depends(get_session)):
     db.commit()
     db.refresh(new_user)
 
-    exp = datetime.datetime.now(datetime.UTC) + constants.ACCESS_TOKEN_LIFETIME_DELTA
+    exp = datetime.datetime.now(datetime.timezone.utc) + constants.ACCESS_TOKEN_LIFETIME_DELTA
     login_session = create_login_session(new_user, db, exp, user_create.login_session_type)
     token, refresh_token = create_token_from_user(new_user, exp, login_session.id)
 
@@ -236,13 +236,13 @@ def refresh_current_token(refresh_obj: RefreshToken, db: Session = Depends(get_s
     dif = datetime.datetime.fromtimestamp(exp) - datetime.datetime.now()
     with_refresh = dif <= datetime.timedelta(hours=1)
 
-    exp = datetime.datetime.now(datetime.UTC) + constants.ACCESS_TOKEN_LIFETIME_DELTA
+    exp = datetime.datetime.now(datetime.timezone.utc) + constants.ACCESS_TOKEN_LIFETIME_DELTA
 
     new_token, new_refresh = create_token_from_user(user, exp, login_session.id, with_refresh)
 
     login_session.expires_at = exp
     if with_refresh:
-        login_session.refresh_expires_at = datetime.datetime.now(datetime.UTC) + constants.REFRESH_TOKEN_LIFETIME_DELTA
+        login_session.refresh_expires_at = datetime.datetime.now(datetime.timezone.utc) + constants.REFRESH_TOKEN_LIFETIME_DELTA
 
     db.add(login_session)
     db.commit()

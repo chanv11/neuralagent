@@ -536,6 +536,11 @@ function createWindow() {
 
   mainWindow.loadURL(startURL);
 
+  // Open DevTools in development mode
+  if (isDev) {
+    mainWindow.webContents.openDevTools();
+  }
+
   mainWindow.on('close', async (e) => {
     if (readyToClose) return;
 

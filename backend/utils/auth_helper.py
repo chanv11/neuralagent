@@ -33,7 +33,7 @@ def create_token_from_user(user: User, exp: datetime.datetime, session_id: int, 
     refresh_token = None
 
     if with_refresh:
-        refresh_exp = datetime.datetime.now(datetime.UTC) + constants.REFRESH_TOKEN_LIFETIME_DELTA
+        refresh_exp = datetime.datetime.now(datetime.timezone.utc) + constants.REFRESH_TOKEN_LIFETIME_DELTA
         payload["exp"] = refresh_exp
         payload["token_type"] = "refresh"
         refresh_token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
@@ -87,7 +87,7 @@ def create_login_session(user: User, db_session: Session, expires_at: datetime.d
         user_id=user.id,
         expires_at=expires_at,
         notification_token=notification_token,
-        refresh_expires_at=datetime.datetime.now(datetime.UTC) + constants.REFRESH_TOKEN_LIFETIME_DELTA,
+        refresh_expires_at=datetime.datetime.now(datetime.timezone.utc) + constants.REFRESH_TOKEN_LIFETIME_DELTA,
         login_session_type=session_type,
     )
     db_session.add(session)
