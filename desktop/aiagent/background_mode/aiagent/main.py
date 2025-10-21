@@ -163,7 +163,8 @@ def perform_action(response):
 
 def get_chrome_tabs():
     try:
-        response = requests.get(f'{os.getenv('BROWSER_CDP_URL')}/json')
+        cdp_url = os.getenv("BROWSER_CDP_URL", "http://127.0.0.1:13783")
+        response = requests.get(f"{cdp_url}/json")
         response.raise_for_status()
         tabs = response.json()
 
@@ -197,11 +198,11 @@ def get_next_step():
         print("Open Tabs:")
         for i, tab in enumerate(tabs):
             print(f"Tab {i+1}: {tab['title']} → {tab['url']}")
-        
-        current_url = tabs[0]['url']
+        current_url = tabs[0].get('url', '')
         print("\n✅ Current tab URL:", current_url)
     else:
         print("No tabs found or Chrome not running.")
+        current_url = ""
 
     payload = {
         'current_open_tabs': tabs,
