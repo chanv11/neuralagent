@@ -243,7 +243,10 @@ def perform_action(response):
 
             elif act == "type":
                 if params.get("replace", False):
-                    pyautogui.hotkey("ctrl", "a" if sys.platform != "darwin" else "command")
+                    if sys.platform == "darwin":
+                        pyautogui.hotkey("command", "a")
+                    else:
+                        pyautogui.hotkey("ctrl", "a")
                     pyautogui.press("backspace")
                 
                 type_unicode_smart(params["text"], delay=0.05)
